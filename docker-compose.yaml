@@ -9,3 +9,28 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./.floci-data:/app/data
+  
+  atlantis:
+    image: ghcr.io/runatlantis/atlantis:latest
+    profiles: ["atlantis"]
+    depends_on: [floci]
+    ports:
+      - "4141:4141"
+    environment:
+      ATLANTIS_AUTOMERGE: "true"
+      ATLANTIS_GH_USER: ${GH_USER}
+      ATLANTIS_GH_TOKEN: ${GH_TOKEN}
+      ATLANTIS_GH_WEBHOOK_SECRET: ${GH_WEBHOOK_SECRET}
+      ATLANTIS_REPO_ALLOWLIST: github.com/${GH_REPO}
+      ATLANTIS_REPO_CONFIG: /etc/atlantis/repos.yaml
+      ATLANTIS_ATLANTIS_URL: http://localhost:4141
+      ATLANTIS_DEFAULT_TF_VERSION: "1.13.0"   # same version as in CI
+      TF_VAR_endpoint: http://floci:4566
+    volumes:
+      - ./atlantis/repos.yaml:/etc/atlantis/repos.yaml:ro
+
+  smee:
+    image: node:22-alpine
+    profiles: ["atlantis"]
+    depends_on: [atlantis]
+    command: npx --yes smee-client --url ${SMEE_URL} --target http://atlantis:4141/events

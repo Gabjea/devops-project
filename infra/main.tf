@@ -50,6 +50,7 @@ resource "aws_lambda_function" "shortener" {
   environment {
     variables = { TABLE_NAME = aws_dynamodb_table.links.name }
   }
+  timeout = 10
 }
 
 resource "aws_apigatewayv2_api" "http" {

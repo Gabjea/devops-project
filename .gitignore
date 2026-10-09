@@ -9,3 +9,5 @@ infra/build/
 __pycache__/
 
 .floci-data/
+
+.env
