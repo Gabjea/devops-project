@@ -17,6 +17,7 @@ services:
     ports:
       - "4141:4141"
     environment:
+      ATLANTIS_AUTOMERGE: "true"
       ATLANTIS_GH_USER: ${GH_USER}
       ATLANTIS_GH_TOKEN: ${GH_TOKEN}
       ATLANTIS_GH_WEBHOOK_SECRET: ${GH_WEBHOOK_SECRET}

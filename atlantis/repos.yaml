@@ -1,6 +1,7 @@
 repos:
   - id: /.*/
     workflow: floci
+    apply_requirements: [approved, mergeable]
 
 workflows:
   floci:
@@ -9,3 +10,7 @@ workflows:
         - init:
             extra_args: ["-backend-config=backend-atlantis.hcl"]
         - plan
+    apply:
+      steps:
+        - apply
+        - run: ../scripts/smoke_test.sh "$(terraform${ATLANTIS_TERRAFORM_VERSION} output -raw api_url)"
