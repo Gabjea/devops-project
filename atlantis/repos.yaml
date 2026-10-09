@@ -1,7 +1,7 @@
 repos:
   - id: /.*/
     workflow: floci
-    apply_requirements: [approved, mergeable]
+    apply_requirements: [mergeable]
 
 workflows:
   floci:
