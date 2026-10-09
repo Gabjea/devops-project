@@ -20,6 +20,12 @@ terraform {
   }
 }
 
+variable "endpoint" {
+    description = "AWS API endpoint (Floci). Overridden inside Docker Compose, where Floci is reachable as http://floci:4566."
+    type        = string
+    default     = "http://localhost:4566"
+  }
+
 provider "aws" {
   region     = "us-east-1"
   access_key = "test"
@@ -30,10 +36,10 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    dynamodb     = "http://localhost:4566"
-    iam          = "http://localhost:4566"
-    lambda       = "http://localhost:4566"
-    sts          = "http://localhost:4566"
-    apigatewayv2 = "http://localhost:4566"
+    apigatewayv2 = var.endpoint
+    dynamodb     = var.endpoint
+    iam          = var.endpoint
+    lambda       = var.endpoint
+    sts          = var.endpoint
   }
 }
