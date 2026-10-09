@@ -37,6 +37,9 @@ resource "aws_lambda_function" "shortener" {
   handler          = "handler.handler"
   filename         = data.archive_file.lambda.output_path
   source_code_hash = data.archive_file.lambda.output_base64sha256
+  environment {
+    variables = { TABLE_NAME = aws_dynamodb_table.links.name }
+  }
 }
 
 resource "aws_apigatewayv2_api" "http" {
@@ -69,4 +72,28 @@ resource "aws_lambda_permission" "apigw" {
   function_name = aws_lambda_function.shortener.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.http.execution_arn}/*/*"
+}
+
+data "aws_iam_policy_document" "dynamodb_access" {
+  statement {
+    actions   = ["dynamodb:GetItem", "dynamodb:PutItem"]
+    resources = [aws_dynamodb_table.links.arn]
+  }
+}
+
+resource "aws_iam_role_policy" "dynamodb_access" {
+  role   = aws_iam_role.lambda.id
+  policy = data.aws_iam_policy_document.dynamodb_access.json
+}
+
+resource "aws_apigatewayv2_route" "create_link" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "POST /links"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+}
+
+resource "aws_apigatewayv2_route" "resolve_link" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "GET /links/{code}"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
