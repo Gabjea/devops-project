@@ -1,0 +1,1 @@
+endpoints = { s3 = "http://floci:4566" }

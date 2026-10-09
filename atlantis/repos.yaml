@@ -1,0 +1,11 @@
+repos:
+  - id: /.*/
+    workflow: floci
+
+workflows:
+  floci:
+    plan:
+      steps:
+        - init:
+            extra_args: ["-backend-config=backend-atlantis.hcl"]
+        - plan
