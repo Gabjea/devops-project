@@ -56,3 +56,54 @@ jobs:
         run: pip install checkov==3.3.26
       - name: Scan Terraform
         run: checkov -d infra --framework terraform
+    
+  integration-tests:
+    needs: [unit-tests, terraform]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.16.5"
+          terraform_wrapper: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: app/requirements-dev.txt
+
+      - name: Start Floci
+        run: |
+          docker compose up -d
+          for i in $(seq 1 30); do
+            if curl -s -o /dev/null http://localhost:4566/_localstack/health; then
+              echo "Floci is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Floci did not start in time"
+          docker compose logs floci
+          exit 1
+
+      - name: Deploy to the ephemeral environment
+        working-directory: infra
+        run: |
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Run integration tests
+        working-directory: app
+        run: |
+          pip install -r requirements-dev.txt
+          API_URL=$(terraform -chdir=../infra output -raw api_url) pytest integration_tests
+
+      - name: Show Floci logs
+        if: failure()
+        run: docker compose logs floci
+
+      - name: Tear down
+        if: always()
+        run: docker compose down
