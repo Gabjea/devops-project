@@ -88,6 +88,9 @@ jobs:
           docker compose logs floci
           exit 1
 
+      - name: Create state bucket
+        run: ./scripts/bootstrap-state.sh
+        
       - name: Deploy to the ephemeral environment
         working-directory: infra
         run: |
