@@ -21,10 +21,10 @@ terraform {
 }
 
 variable "endpoint" {
-    description = "AWS API endpoint (Floci). Overridden inside Docker Compose, where Floci is reachable as http://floci:4566."
-    type        = string
-    default     = "http://localhost:4566"
-  }
+  description = "AWS API endpoint (Floci). Overridden inside Docker Compose, where Floci is reachable as http://floci:4566."
+  type        = string
+  default     = "http://localhost:4566"
+}
 
 provider "aws" {
   region     = "us-east-1"
