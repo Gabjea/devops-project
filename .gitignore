@@ -7,3 +7,5 @@ infra/build/
 .venv/
 .pytest_cache/
 __pycache__/
+
+.floci-data/
