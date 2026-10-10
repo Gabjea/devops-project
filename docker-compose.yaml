@@ -30,7 +30,7 @@ services:
       - ./atlantis/repos.yaml:/etc/atlantis/repos.yaml:ro
 
   smee:
-    image: node:22-alpine
+    image: node:25-alpine
     profiles: ["atlantis"]
     depends_on: [atlantis]
     command: npx --yes smee-client --url ${SMEE_URL} --target http://atlantis:4141/events
