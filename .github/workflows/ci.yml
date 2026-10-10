@@ -56,7 +56,19 @@ jobs:
         run: pip install checkov==3.3.26
       - name: Scan Terraform
         run: checkov -d infra --framework terraform
-    
+  
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install pip-audit
+        run: pip install pip-audit
+      - name: Audit Python dependencies
+        run: pip-audit -r app/requirements-dev.txt        
+
   integration-tests:
     needs: [unit-tests, terraform]
     runs-on: ubuntu-latest
