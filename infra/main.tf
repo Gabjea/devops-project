@@ -35,7 +35,6 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_lambda_function" "shortener" {
-  #checkov:skip=CKV_AWS_50
   #checkov:skip=CKV_AWS_116
   #checkov:skip=CKV_AWS_117
   #checkov:skip=CKV_AWS_173
