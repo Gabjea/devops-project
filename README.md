@@ -22,22 +22,7 @@ Example runs:
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    dev[Developer] -->|pull request| gh[GitHub]
-    gh --> ci[GitHub Actions: CI]
-    gh -->|webhook via smee.io| atlantis
-
-    subgraph local[Docker Compose]
-        atlantis[Atlantis] -->|terraform plan / apply| floci
-        subgraph floci[Floci: emulated AWS]
-            apigw[API Gateway] --> lambda[Lambda] --> ddb[(DynamoDB)]
-            s3[(S3: Terraform state)]
-        end
-    end
-    atlantis -->|plan, smoke test, merge| gh
-```
-
+![Architecture of the pipeline](docs/architecture.png)
 ## The pipeline
 
 | Requirement | Implementation |
