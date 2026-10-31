@@ -11,7 +11,7 @@ services:
       - ./.floci-data:/app/data
   
   atlantis:
-    image: ghcr.io/runatlantis/atlantis:v0.48.1
+    image: ghcr.io/runatlantis/atlantis:v0.49.0
     profiles: ["atlantis"]
     depends_on: [floci]
     ports:
